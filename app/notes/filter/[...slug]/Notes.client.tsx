@@ -4,8 +4,6 @@ import { useState } from 'react';
 import NoteList from '@/components/NoteList/NoteList';
 import Pagination from '@/components/Pagination/Pagination';
 import css from './page.module.css';
-import Modal from '@/components/Modal/Modal';
-import NoteForm from '@/components/NoteForm/NoteForm';
 import { Toaster } from 'react-hot-toast';
 import { fetchNote } from '@/lib/api';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
@@ -14,6 +12,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { Loader } from '@/components/Loader/Loader';
 import { NoteTag } from '@/types/note';
 import Error from './error';
+import Link from 'next/link';
 
 interface NotesProps {
   tag: NoteTag | undefined;
@@ -22,7 +21,6 @@ interface NotesProps {
 export default function Notes({ tag }: NotesProps) {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
-  const [isOpen, setIsOpen] = useState(false);
 
   const { data, isFetching, isSuccess, isError, error } = useQuery({
     queryKey: ['notes', search, page, tag],
@@ -37,10 +35,6 @@ export default function Notes({ tag }: NotesProps) {
     setPage(1);
   }, 1000);
 
-  function handleOnClose() {
-    setIsOpen(false);
-  }
-
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
@@ -54,9 +48,9 @@ export default function Notes({ tag }: NotesProps) {
           />
         )}
 
-        <button onClick={() => setIsOpen(true)} className={css.button}>
+        <Link href="/notes/action/create" className={css.button}>
           Create note +
-        </button>
+        </Link>
       </header>
       <main>
         {isFetching && <Loader />}
@@ -65,11 +59,6 @@ export default function Notes({ tag }: NotesProps) {
           <div>Notes not found</div>
         )}
         {data && data.notes.length > 0 && <NoteList notes={data.notes} />}
-        {isOpen && (
-          <Modal onClose={handleOnClose}>
-            <NoteForm onCancel={handleOnClose} defaultTag={tag} />
-          </Modal>
-        )}
       </main>
       <Toaster />
     </div>
