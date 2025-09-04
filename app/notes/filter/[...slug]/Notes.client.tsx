@@ -48,7 +48,7 @@ export default function Notes({ tag }: NotesProps) {
           />
         )}
 
-        <Link href="/notes/action/create" className={css.button}>
+        <Link href="/notes/action/create" className={css.link}>
           Create note +
         </Link>
       </header>
